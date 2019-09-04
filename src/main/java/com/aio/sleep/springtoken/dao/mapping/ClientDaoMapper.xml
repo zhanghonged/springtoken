@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aio.sleep.springtoken.dao.ClientDao">
+
+    <select id="selectClientByAid" resultType="com.aio.sleep.springtoken.domain.Client">
+        SELECT
+            id,
+            aid,
+            gaid,
+            ip,
+            country,
+            operators,
+            is_wifi,
+            req_num
+        FROM clients
+        WHERE
+	        aid = #{aid}
+    </select>
+
+    <select id="selectTokenById" resultType="com.aio.sleep.springtoken.domain.Token">
+        select *
+        from token
+        where
+            client_id = #{client_id}
+    </select>
+
+    <insert id="insertToken" useGeneratedKeys="true" keyProperty="id" parameterType="com.aio.sleep.springtoken.domain.Client">
+        insert into token (token,salt,client_id)
+        values (#{token},#{salt},#{client_id})
+    </insert>
+
+    <update id="updateToken" parameterType="com.aio.sleep.springtoken.domain.Client">
+        update token
+        set token = #{token}, salt =#{salt}
+        where client_id = #{client_id}
+    </update>
+
+    <insert id="insertclient" useGeneratedKeys="true" keyProperty="id" parameterType="com.aio.sleep.springtoken.domain.Client">
+        insert into clients (aid,gaid,ip,country,operators,is_wifi,req_num,create_time,last_access)
+        values (#{aid},#{gaid},#{ip},#{country},#{operators},#{is_wifi},1,now(),now())
+    </insert>
+
+    <update id="updateClient" parameterType="com.aio.sleep.springtoken.domain.Client">
+        update clients
+        set req_num = req_num +1,
+            ip = #{ip},
+            country = #{country}
+        where aid = #{aid}
+    </update>
+</mapper>
